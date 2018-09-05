@@ -19,75 +19,22 @@ main.set_titlebar(bar)
 main.set_default_size(972, 512)
 
 # Loading PWA's manifest  
-try:
-	manifest = json.load(open("manifest.json"))
-except FileNotFoundError:
-	print("""
-Couldn't find the manifest.
-
-Try the following:
-* Make sure that you run pwanix in the correct folder.
-* Check that the manifest is named "manifest.json".
-
-Details:
-https://developer.mozilla.org/en-US/docs/Web/Manifest
-https://developers.google.com/web/fundamentals/web-app-manifest/
-""")
-	quit()
+manifest = json.load(open("manifest.json"))
 
 # Setting window title  
-try:
-	bar.set_title(manifest["short_name"])
-except KeyError:
-	print("""
-Missing "short_name" in the manifest.
-
-Try the following:
-* Make sure that the manifest is written without errors.
-
-Details:
-https://developer.mozilla.org/en-US/docs/Web/Manifest
-https://developers.google.com/web/fundamentals/web-app-manifest/
-""")
-	quit()
+bar.set_title(manifest["short_name"])
 
 # Enable fullscreen or open PWA in browser?  
-try:
-	if manifest["display"] == "fullscreen":
-		main.fullscreen()
-	elif manifest["display"] == "browser-ui":
-		os.system("x-www-browser " + manifest["scope"])
-		quit()
-except KeyError:
-	print("""
-Missing "display" in the manifest.
-
-Try the following:
-* Make sure that the manifest is written without errors.
-
-Details:
-https://developer.mozilla.org/en-US/docs/Web/Manifest
-https://developers.google.com/web/fundamentals/web-app-manifest/
-""")
+if manifest["display"] == "fullscreen":
+	main.fullscreen()
+elif manifest["display"] == "browser-ui":
+	os.system("x-www-browser " + manifest["scope"])
 	quit()
 
 # And finaly WebView!  
-try:
-	web = WebKit2.WebView(settings=websettings)
-	web.load_uri("file://" + Path.cwd() + manifest["start_url"])
-	main.add(web)
-except KeyError:
-	print("""
-Missing "start_url" in the manifest.
-
-Try the following:
-* Make sure that the manifest is written without errors.
-
-Details:
-https://developer.mozilla.org/en-US/docs/Web/Manifest
-https://developers.google.com/web/fundamentals/web-app-manifest/
-""")
-	quit()
+web = WebKit2.WebView()
+web.load_uri("file://" + str(Path.cwd()) + "/" + manifest["start_url"])
+main.add(web)
 
 main.show_all()
 Gtk.main()
