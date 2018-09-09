@@ -5,6 +5,7 @@ import gi
 import os
 import sys
 import json
+import urllib
 from pathlib import Path
 
 gi.require_version("Gtk", "3.0")
@@ -18,8 +19,14 @@ bar = Gtk.HeaderBar(show_close_button=True)
 main.set_titlebar(bar)
 main.set_default_size(972, 512)
 
+# Locate PWA  
+if len(sys.argv) == 1:
+	path = None
+else:
+	path = sys.argv[1] + "/"
+
 # Loading PWA's manifest  
-manifest = json.load(open("manifest.json"))
+manifest = json.load(open(path + "manifest.json"))
 
 # Setting window title  
 bar.set_title(manifest["short_name"])
@@ -33,7 +40,7 @@ elif manifest["display"] == "browser-ui":
 
 # And finaly WebView!  
 web = WebKit2.WebView()
-web.load_uri("file://" + str(Path.cwd()) + "/" + manifest["start_url"])
+web.load_uri("file://" + str(Path.cwd()) + "/" + path + manifest["start_url"])
 main.add(web)
 
 main.show_all()
