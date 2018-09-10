@@ -21,11 +21,13 @@ main.set_default_size(972, 512)
 
 # Locate PWA  
 if len(sys.argv) == 1:
-	path = None
-else:
+	path = str(Path.cwd()) + "/"
+elif sys.argv[1][0] == "/":
 	path = sys.argv[1] + "/"
+else:
+	path = "/" + str(Path.cwd()) + "/" + sys.argv[1] + "/"
 
-# Loading PWA's manifest  
+# Loading PWA's manifest
 manifest = json.load(open(path + "manifest.json"))
 
 # Setting window title  
@@ -40,7 +42,7 @@ elif manifest["display"] == "browser-ui":
 
 # And finaly WebView!  
 web = WebKit2.WebView()
-web.load_uri("file://" + str(Path.cwd()) + "/" + path + manifest["start_url"])
+web.load_uri("file://" + path + manifest["start_url"])
 main.add(web)
 
 main.show_all()
