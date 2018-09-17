@@ -5,7 +5,7 @@ import gi
 import os
 import sys
 import json
-import urllib
+import urllib.request
 from pathlib import Path
 
 gi.require_version("Gtk", "3.0")
@@ -21,17 +21,22 @@ main.set_default_size(972, 512)
 
 # Locate PWA  
 if len(sys.argv) == 1:
-	path = str(Path.cwd()) + "/"
-elif sys.argv[1][0] == "/":
+	path = "file://" + str(Path.cwd()) + "/"
+elif sys.argv[1][:7] == "http://" or sys.argv[1][:8] == "https://":
 	path = sys.argv[1] + "/"
+elif sys.argv[1][0] == "/":
+	path = "file://" + sys.argv[1] + "/"
 else:
-	path = "/" + str(Path.cwd()) + "/" + sys.argv[1] + "/"
+	path = "file://" + "/" + str(Path.cwd()) + "/" + sys.argv[1] + "/"
 
-# Loading PWA's manifest
-manifest = json.load(open(path + "manifest.json"))
+# Load PWA's manifest
+manifest = json.load(urllib.request.urlopen(path + "manifest.json"))
 
-# Setting window title  
-bar.set_title(manifest["short_name"])
+# Set window title  
+try:
+	bar.set_title(manifest["short_name"])
+except KeyError:
+	bar.set_title(manifest["name"])
 
 # Enable fullscreen or open PWA in browser?  
 if manifest["display"] == "fullscreen":
@@ -40,9 +45,10 @@ elif manifest["display"] == "browser-ui":
 	os.system("x-www-browser " + manifest["scope"])
 	quit()
 
-# And finaly WebView!  
+# Add WebView and load PWA's main page  
 web = WebKit2.WebView()
-web.load_uri("file://" + path + manifest["start_url"])
+web.get_settings().set_allow_file_access_from_file_urls(True)
+web.load_uri(path + manifest["start_url"])
 main.add(web)
 
 main.show_all()

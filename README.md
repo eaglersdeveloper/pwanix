@@ -1,8 +1,7 @@
 # Pwanix
 Pwanix allows to run progressive web applications in separate windows in GNU/Linux.
 
-## Getting Started
-...
+![2018-09-17 20-59-18](https://user-images.githubusercontent.com/40228953/45638087-252b9a80-babd-11e8-8fb3-afca9af64457.png)
 
 ## Legal
 ### Attribution
